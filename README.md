@@ -16,7 +16,7 @@ npm i snoowrap
 
 ```
 ## Using the API
-### Usage Example
+### Usage Examples
 ```
 localhost:3000/subreddit/top?name=TwoSentenceHorror&time=all&llimit=2
 ```
