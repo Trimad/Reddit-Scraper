@@ -1,9 +1,23 @@
 # Reddit-Scraper
 
 ## Getting started
-1. Make sure you have [Node.js](http://nodejs.org/) installed.
-2. Install [Express.js](https://expressjs.com/) and [Snoowrap](https://github.com/not-an-aardvark/snoowrap) dependencies.
+1. Clone this repository.
+```
+git clone https://github.com/Trimad/Reddit-Scraper.git
+```
+2. Make sure you have [Node.js](http://nodejs.org/) installed.
+3. Install [Express.js](https://expressjs.com/) and [Snoowrap](https://github.com/not-an-aardvark/snoowrap) dependencies.
 ```
 npm i express
 npm i snoowrap
+```
+## Creating Your Config File
+```
+
+```
+## Using the API
+### Get Top Posts
+### Usage Example
+```
+localhost:3000/subreddit/top?name=TwoSentenceHorror&time=all&llimit=2
 ```
