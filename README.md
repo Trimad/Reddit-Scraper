@@ -21,3 +21,6 @@ npm i snoowrap
 ```
 localhost:3000/subreddit/top?name=TwoSentenceHorror&time=all&llimit=2
 ```
+```
+localhost:3000/submission?id=m2pd90
+```
