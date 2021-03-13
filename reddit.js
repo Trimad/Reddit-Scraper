@@ -3,9 +3,9 @@ const express = require('express')
 const snoowrap = require('snoowrap');
 
 const USER_AGENT = process.env.userAgent;
-const CLIENT_ID = CLIENT_ID;
-const CLIENT_SECRET = CLIENT_SECRET;
-const REFRESH_TOKEN = REFRESH_TOKEN;
+const CLIENT_ID = process.env.clientId;
+const CLIENT_SECRET = process.env.clientSecret;
+const REFRESH_TOKEN = process.env.refreshToken;
 
 const hostname = '127.0.0.1';
 const port = 3000;
