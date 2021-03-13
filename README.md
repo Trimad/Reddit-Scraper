@@ -12,9 +12,13 @@ npm i express
 npm i snoowrap
 npm i dotenv
 ```
-## Creating Your Config File
+## Setup Environment Variables
+### Create a file named ".env" in your project directory and populate the following authentication strings.
 ```
-
+userAgent=
+clientId=
+clientSecret=
+refreshToken=
 ```
 ## Using the API
 ### Usage Examples
