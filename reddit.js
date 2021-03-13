@@ -1,5 +1,12 @@
-const snoowrap = require('snoowrap');
+const dotenv = require('dotenv').config();
 const express = require('express')
+const snoowrap = require('snoowrap');
+
+const USER_AGENT = process.env.userAgent;
+const CLIENT_ID = CLIENT_ID;
+const CLIENT_SECRET = CLIENT_SECRET;
+const REFRESH_TOKEN = REFRESH_TOKEN;
+
 const hostname = '127.0.0.1';
 const port = 3000;
 const app = express()
@@ -9,10 +16,10 @@ app.listen(port, () => {
 })
 
 const r = new snoowrap({
-  userAgent: 'test',
-  clientId: 'h0MDf1fkbsNcIA',
-  clientSecret: '7fh2ad7l49IgWSzCXSY4Vfag4keySA',
-  refreshToken: '845574849900-cJydmA2JRSrpjRYsKzBgenO-huVzhg'
+  userAgent: USER_AGENT,
+  clientId: CLIENT_ID,
+  clientSecret: CLIENT_SECRET,
+  refreshToken: REFRESH_TOKEN
 });
 
 var posts_groomed = [];

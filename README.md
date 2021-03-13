@@ -6,10 +6,11 @@
 git clone https://github.com/Trimad/Reddit-Scraper.git
 ```
 2. Make sure you have [Node.js](http://nodejs.org/) installed.
-3. Install [Express.js](https://expressjs.com/) and [Snoowrap](https://github.com/not-an-aardvark/snoowrap) dependencies.
+3. Install [Express.js](https://expressjs.com/), [Snoowrap](https://github.com/not-an-aardvark/snoowrap) and [dotenv](https://www.npmjs.com/package/dotenv) dependencies.
 ```
 npm i express
 npm i snoowrap
+npm i dotenv
 ```
 ## Creating Your Config File
 ```
