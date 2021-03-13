@@ -13,7 +13,7 @@ npm i snoowrap
 npm i dotenv
 ```
 ## Setup Environment Variables
-### Create a file named ".env" in your project directory and populate the following authentication strings.
+This project takes advantage of dotenv to keep environment variables private. Create a file named ".env" in your project directory and define your authentication strings. 
 ```
 userAgent=
 clientId=
