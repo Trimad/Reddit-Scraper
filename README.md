@@ -16,7 +16,6 @@ npm i snoowrap
 
 ```
 ## Using the API
-### Get Top Posts
 ### Usage Example
 ```
 localhost:3000/subreddit/top?name=TwoSentenceHorror&time=all&llimit=2
