@@ -20,6 +20,10 @@ clientId=
 clientSecret=
 refreshToken=
 ```
+## Running the API
+```
+node reddit.js
+```
 ## Using the API
 ### Usage Examples
 ```
