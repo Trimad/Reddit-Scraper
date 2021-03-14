@@ -1,5 +1,7 @@
 const dotenv = require('dotenv').config();
-const express = require('express')
+const express = require('express');
+const fs = require('fs');
+const https = require('https');
 const snoowrap = require('snoowrap');
 
 const REDDIT_CLIENT_ID = process.env.clientId;
@@ -14,6 +16,23 @@ let DEBUG;
 let COMMAND = process.argv;
 const PORT = 3000;
 const app = express();
+
+const storeData = (data, path) => {
+  try {
+    fs.writeFileSync(path, JSON.stringify(data))
+  } catch (err) {
+    console.error(err)
+  }
+}
+
+const loadData = (path) => {
+  try {
+    return fs.readFileSync(path, 'utf8')
+  } catch (err) {
+    console.error(err)
+    return false;
+  }
+}
 
 app.listen(PORT, () => {
   function init() {
@@ -110,24 +129,46 @@ app.get('/getsubredditrules', (req, res) => {
   });
 });
 
-/* * *  *  *  * 
- * ALPACA API
-*  *  *  *  * */
+/*~*~*~*~*~*~*~*~*~*~**~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~**~*~*~*~**~*~
+ * ALPACA API * ALPACA API * ALPACA API * ALPACA API * ALPACA API * ALPACA API
+~*~*~*~*~*~*~*~*~*~**~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~**~*~*/
+
+/*********************************
+* Description: Gets a JSON array of all stock symbols that are tradable. 
+* Usage example: localhost:3000/assets
+**********************************/
 app.get('/assets', (request, response) => {
   console.log(request.url, new Date().toLocaleString());
 
-  let url = BASE_URL + "/v2/assets";
-  let req = unirest("GET", url);
+  const options = {
+    hostname: ALPACA_BASE_URL,
+    port: 443,
+    path: "/v2/assets",
+    method: 'GET',
+    headers: {
+      'APCA-API-KEY-ID': ALPACA_API_KEY,
+      'APCA-API-SECRET-KEY': ALPACA_SECRET_KEY
+    }
+  }
 
-  req.headers({
-    "APCA-API-KEY-ID": ALPACA_API_KEY,
-    "APCA-API-SECRET-KEY": ALPACA_SECRET_KEY
-  }).then((res) => {
-    let assets = res.body.filter(asset => asset.tradable);
-    let symbols = [];
-    assets.forEach(asset => { symbols.push(asset.symbol); });
-    storeData(symbols, "data/symbols.json");
-    response.send(assets);
-  });
+  https.get(options, res => {
+    let chunks = "";
+    res.setEncoding('utf8');
+    res.on('data', (chunk) => {
+      chunks += chunk;
+    }).on('end', () => {
+      try {
+        let assets = JSON.parse(chunks).filter(asset => asset.tradable);
+        let symbols = [];
+        assets.forEach(asset => { symbols.push(asset.symbol); });
+        storeData(symbols, "data/symbols.json");
+        response.send(symbols);
+      } catch (e) {
+        console.error(e.message);
+      }
+    })
+  }).on('error', (e) => {
+    console.error(e.message);
+  })
 
 });

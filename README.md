@@ -32,13 +32,15 @@ alpaca_base_url_paper=
 alpaca_secret_key_paper=
 ```
 ## Running the API
+### Live Trading
+```
+node reddit.js live
+```
 ### Paper Trading
 ```
 node reddit.js paper
-```
-###Live Trading
-```
-node reddit.js live
+node reddit.js test
+node reddit.js debug
 ```
 ## Using the API
 ### Usage Examples
