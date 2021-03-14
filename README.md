@@ -15,14 +15,30 @@ npm i dotenv
 ## Setup Environment Variables
 This project takes advantage of dotenv to keep environment variables private. Create a file named ".env" in your project directory and define your authentication strings. 
 ```
+#Reddit API
 userAgent=
 clientId=
 clientSecret=
 refreshToken=
+
+#Alpaca API Live Trading
+alpaca_api_key_live=
+alpaca_base_url_live=
+alpaca_secret_key_live=
+
+#Alpaca API Paper Trading
+alpaca_api_key_paper=
+alpaca_base_url_paper=
+alpaca_secret_key_paper=
 ```
 ## Running the API
+### Paper Trading
 ```
-node reddit.js
+node reddit.js paper
+```
+###Live Trading
+```
+node reddit.js live
 ```
 ## Using the API
 ### Usage Examples

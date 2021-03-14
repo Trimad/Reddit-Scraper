@@ -2,24 +2,43 @@ const dotenv = require('dotenv').config();
 const express = require('express')
 const snoowrap = require('snoowrap');
 
-const USER_AGENT = process.env.userAgent;
-const CLIENT_ID = process.env.clientId;
-const CLIENT_SECRET = process.env.clientSecret;
-const REFRESH_TOKEN = process.env.refreshToken;
+const REDDIT_CLIENT_ID = process.env.clientId;
+const REDDIT_CLIENT_SECRET = process.env.clientSecret;
+const REDDIT_REFRESH_TOKEN = process.env.refreshToken;
+const REDDIT_USER_AGENT = process.env.userAgent;
 
-const hostname = '127.0.0.1';
-const port = 3000;
-const app = express()
+let ALPACA_API_KEY;
+let ALPACA_BASE_URL;
+let ALPACA_SECRET_KEY;
+let DEBUG;
+let COMMAND = process.argv;
+const PORT = 3000;
+const app = express();
 
-app.listen(port, () => {
-  console.log(`Example app listening at http://localhost:${port}`)
-})
+app.listen(PORT, () => {
+  function init() {
+    for (c of COMMAND) {
+      console.log(c);
+      if (c == "live") {
+        DEBUG = false;
+        console.log('\x1b[31m%s\x1b[0m', 'YOU ARE TRADING WITH REAL CURRENCY');  //cyan
+      } else if (c == "test" || c == "debug" || c == "paper") {
+        DEBUG = true;
+        console.log('\x1b[33m%s\x1b[0m', 'YOU ARE TRADING WITH PAPER CURRENCY');  //cyan 
+      }
+    }
+    ALPACA_API_KEY = DEBUG ? process.env.alpaca_api_key_live : process.env.alpaca_api_key_paper;
+    ALPACA_BASE_URL = DEBUG ? process.env.alpaca_base_url_live : process.env.alpaca_base_url_paper;
+    ALPACA_SECRET_KEY = DEBUG ? process.env.alpaca_secret_key_live : process.env.alpaca_secret_key_paper;
+  }
+  init();
+});
 
 const r = new snoowrap({
-  userAgent: USER_AGENT,
-  clientId: CLIENT_ID,
-  clientSecret: CLIENT_SECRET,
-  refreshToken: REFRESH_TOKEN
+  userAgent: REDDIT_USER_AGENT,
+  clientId: REDDIT_CLIENT_ID,
+  clientSecret: REDDIT_CLIENT_SECRET,
+  refreshToken: REDDIT_REFRESH_TOKEN
 });
 
 var posts_groomed = [];
@@ -89,4 +108,26 @@ app.get('/getsubredditrules', (req, res) => {
   r.getSubreddit(subreddit).getRules().then(function (response) {
     res.send(response);
   });
+});
+
+/* * *  *  *  * 
+ * ALPACA API
+*  *  *  *  * */
+app.get('/assets', (request, response) => {
+  console.log(request.url, new Date().toLocaleString());
+
+  let url = BASE_URL + "/v2/assets";
+  let req = unirest("GET", url);
+
+  req.headers({
+    "APCA-API-KEY-ID": ALPACA_API_KEY,
+    "APCA-API-SECRET-KEY": ALPACA_SECRET_KEY
+  }).then((res) => {
+    let assets = res.body.filter(asset => asset.tradable);
+    let symbols = [];
+    assets.forEach(asset => { symbols.push(asset.symbol); });
+    storeData(symbols, "data/symbols.json");
+    response.send(assets);
+  });
+
 });
