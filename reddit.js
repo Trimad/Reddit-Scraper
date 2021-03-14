@@ -13,9 +13,10 @@ let ALPACA_API_KEY;
 let ALPACA_BASE_URL;
 let ALPACA_SECRET_KEY;
 let DEBUG;
-let COMMAND = process.argv;
+
 const PORT = 3000;
 const app = express();
+var posts_groomed = [];
 
 const storeData = (data, path) => {
   try {
@@ -35,22 +36,20 @@ const loadData = (path) => {
 }
 
 app.listen(PORT, () => {
-  function init() {
-    for (c of COMMAND) {
-      console.log(c);
-      if (c == "live") {
-        DEBUG = false;
-        console.log('\x1b[31m%s\x1b[0m', 'YOU ARE TRADING WITH REAL CURRENCY');  //cyan
-      } else if (c == "test" || c == "debug" || c == "paper") {
-        DEBUG = true;
-        console.log('\x1b[33m%s\x1b[0m', 'YOU ARE TRADING WITH PAPER CURRENCY');  //cyan 
-      }
-    }
-    ALPACA_API_KEY = DEBUG ? process.env.alpaca_api_key_live : process.env.alpaca_api_key_paper;
-    ALPACA_BASE_URL = DEBUG ? process.env.alpaca_base_url_live : process.env.alpaca_base_url_paper;
-    ALPACA_SECRET_KEY = DEBUG ? process.env.alpaca_secret_key_live : process.env.alpaca_secret_key_paper;
+process.argv.forEach(arg => {
+  if (arg == "live") {
+    DEBUG = false;
+    console.log('\x1b[31m%s\x1b[0m', 'YOU ARE TRADING WITH REAL CURRENCY');  //cyan
+  } else if (arg == "test" || arg == "debug" || arg == "paper") {
+    DEBUG = true;
+    console.log('\x1b[33m%s\x1b[0m', 'YOU ARE TRADING WITH PAPER CURRENCY');  //cyan 
   }
-  init();
+});
+
+  ALPACA_API_KEY = DEBUG ? process.env.alpaca_api_key_live : process.env.alpaca_api_key_paper;
+  ALPACA_BASE_URL = DEBUG ? process.env.alpaca_base_url_live : process.env.alpaca_base_url_paper;
+  ALPACA_SECRET_KEY = DEBUG ? process.env.alpaca_secret_key_live : process.env.alpaca_secret_key_paper;
+
 });
 
 const r = new snoowrap({
@@ -60,11 +59,13 @@ const r = new snoowrap({
   refreshToken: REDDIT_REFRESH_TOKEN
 });
 
-var posts_groomed = [];
+/*~*~*~*~*~*~*~*~*~*~**~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~**~*~*~*~**~*~
+ * REDDIT API * REDDIT API * REDDIT API * REDDIT API * REDDIT API * REDDIT API
+~*~*~*~*~*~*~*~*~*~**~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~**~*~*/
 
 /*********************************
 * Description: 
-* Usage example: localhost:3000/subreddit/top?name=TwoSentenceHorror&time=all&llimit=2
+* Usage example: localhost:3000/subreddit/top?name=wallstreetbets&time=all&llimit=2
 **********************************/
 app.get('/subreddit/top', async (request, response) => {
   let n = request.query.name;
@@ -110,17 +111,11 @@ app.get('/submission', async (request, response) => {
   }
 });
 
-
-
-
-
 // function getSubmissionComments(id) {
 //   let submission = r.getSubmission(id).fetch().expandReplies({ limit: 100, depth: 10 });
 //   //r.getSubmission(asdf).expandReplies().then(thread => { thread.comments.forEach((comment) => whatever); });
 //   return submission;
 // }
-
-
 
 //Get Subreddit Rules
 app.get('/getsubredditrules', (req, res) => {
@@ -135,9 +130,9 @@ app.get('/getsubredditrules', (req, res) => {
 
 /*********************************
 * Description: Gets a JSON array of all stock symbols that are tradable. 
-* Usage example: localhost:3000/assets
+* Usage example: localhost:3000/symbols
 **********************************/
-app.get('/assets', (request, response) => {
+app.get('/symbols', (request, response) => {
   console.log(request.url, new Date().toLocaleString());
 
   const options = {
