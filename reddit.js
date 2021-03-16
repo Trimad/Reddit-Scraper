@@ -36,15 +36,15 @@ const loadData = (path) => {
 }
 
 app.listen(PORT, () => {
-process.argv.forEach(arg => {
-  if (arg == "live") {
-    DEBUG = false;
-    console.log('\x1b[31m%s\x1b[0m', 'YOU ARE TRADING WITH REAL CURRENCY');  //cyan
-  } else if (arg == "test" || arg == "debug" || arg == "paper") {
-    DEBUG = true;
-    console.log('\x1b[33m%s\x1b[0m', 'YOU ARE TRADING WITH PAPER CURRENCY');  //cyan 
-  }
-});
+  process.argv.forEach(arg => {
+    if (arg == "live") {
+      DEBUG = false;
+      console.log('\x1b[31m%s\x1b[0m', 'YOU ARE TRADING WITH REAL CURRENCY');  //cyan
+    } else if (arg == "test" || arg == "debug" || arg == "paper") {
+      DEBUG = true;
+      console.log('\x1b[33m%s\x1b[0m', 'YOU ARE TRADING WITH PAPER CURRENCY');  //cyan 
+    }
+  });
 
   ALPACA_API_KEY = DEBUG ? process.env.alpaca_api_key_live : process.env.alpaca_api_key_paper;
   ALPACA_BASE_URL = DEBUG ? process.env.alpaca_base_url_live : process.env.alpaca_base_url_paper;
@@ -65,24 +65,37 @@ const r = new snoowrap({
 
 /*********************************
 * Description: 
-* Usage example: localhost:3000/subreddit/top?name=wallstreetbets&time=all&llimit=2
+* Usage example: localhost:3000/subreddit/search?name=wallstreetbets&search=amc&time=day&sort=top
+**********************************/
+app.get('/subreddit/search', async (request, response) => {
+  let rq_name = request.query.name;
+  let rq_search = request.query.search;
+  let rq_time = request.query.time;
+  let rq_sort = request.query.sort;
+
+  const temp = await r.getSubreddit(rq_name).search({ query: rq_search, time: rq_time, sort: rq_sort }).fetchAll();
+  response.send(temp);
+
+});
+
+/*********************************
+* Description: 
+* Usage example: localhost:3000/subreddit/top?name=wallstreetbets&time=all&llimit=3
 **********************************/
 app.get('/subreddit/top', async (request, response) => {
-  let n = request.query.name;
-  let t = request.query.time;
-
-  const subreddit = await r.getSubreddit(n);
-  const posts = await subreddit.getTop({ time: t });
-
   posts_groomed.splice(0, posts_groomed.length);//empty the array
+  let rq_name = request.query.name;
+  let rq_limit = request.query.limit;
 
-  posts.forEach(post => {
-    posts_groomed.push({
-      link: post.url,
-      title: post.title,
-      id: post.id
-    })
-  });
+  await r.getSubreddit(rq_name).getTop({ limit: rq_limit }).then(posts => {
+    posts.forEach(post => {
+      posts_groomed.push({
+        link: post.url,
+        title: post.title,
+        id: post.id
+      })
+    });
+  })
 
   response.send(posts_groomed);
 
